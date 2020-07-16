@@ -7,13 +7,13 @@ import java.util.List;
 
 public interface UserTimelineFetcherInterface {
 
-    List<String> getUserTimeline() throws NullPointerException;
+    List<String> getUserTimeline();
 
     String getTweetByTweetId(String tweetId);
 
     List<String> getTweetByQuerySearch(Query query);
 
-    List<String> getUserTimelineAfterPaging();
+    List<String> getUserTimelineAfterPaging(Integer pageNumber, Integer numberOfTweets);
 
     List<String> getAllTrendingLocations();
 }

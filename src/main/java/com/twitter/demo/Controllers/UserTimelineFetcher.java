@@ -5,6 +5,7 @@ import com.twitter.demo.Services.Interfaces.UserTimelineTweetsInterfaceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import twitter4j.*;
@@ -19,12 +20,13 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * <h1>Getting Newsfeed/timeline of </h1>
+ * <h1>Getting Newsfeed/timeline of User</h1>
  * <p>Reloading the timeline of the logged in user,
  * with the new feeds that were generated from the previous time
  * it was loaded.
- * Also loads a single status using a status id.
- * And provides a list of location considered trendy.
+ * Searches for a tweet using keyword.
+ * Loads a single status using a status id.
+ * provides a list of location considered trendy.
  * </p>
  *
  *  @author medha.smriti
@@ -42,58 +44,51 @@ public class UserTimelineFetcher {
      * from the time it was loaded previously.
      * @return a list of all all the tweets posted on the timeline
      */
-    @GetMapping(path = "/getAllTweets")
+    @GetMapping(path = "/getUserTimelineTweets")
     public List<String> getAllTweetsOnTimeline() {
-        List<String> statuses = userTimelineFetcherInterfaceImp.getUserTimeline();
-        logger.info("Got all the statuses");
-        return statuses;
+        return userTimelineFetcherInterfaceImp.getUserTimeline();
     }
+
     /**
      * Getting a single post from the user's timeline,
      * which has the status id as the input value.
      * @param tweetId
      * @return the tweet which has tweet id as the input parameter
      */
-    @GetMapping(path = "/getTweetById")
-    public String getTweetById(@RequestParam String tweetId) {
-        if(tweetId == null) {
+    @GetMapping(path = "/getTweet/{tweetId}")
+    public String getTweetById(@PathVariable String tweetId) {
+        if (tweetId.equals(null)) {
             logger.error("Enter a tweet Id to proceed", tweetId);
             return "Enter a TweetId";
         }
-        String status = userTimelineFetcherInterfaceImp.getTweetByTweetId(tweetId);
-        return  status;
+        return userTimelineFetcherInterfaceImp.getTweetByTweetId(tweetId);
     }
 
     /**
-     * Getting few posts from the user's timeline,
+     * Getting posts from the user's timeline,
      * which satisfies the input query.
      * @param query
      * @return a list of tweets which contains the query.
      */
-    @GetMapping(path = "/getTweetByQuery")
-    public List<String> getTweetById(@RequestParam Query query) {
-        List<String> statuses = null;
-
-        if(query == null) {
+    @GetMapping(path = "/searchTweets")
+    public List<String> getTweetByQuery(@RequestParam Query query) {
+        if (query.getQuery().equals("")) {
             logger.error("Enter a query term to move forward", query);
-            statuses.add("Enter a correct query term");
-            return statuses;
+            return null;
         }
-        statuses = userTimelineFetcherInterfaceImp.getTweetByQuerySearch(query);
-        return statuses;
+        return userTimelineFetcherInterfaceImp.getTweetByQuerySearch(query);
     }
 
     /**
      * Getting all the posts from users timeline,
      * after applying pagination.
+     * @param pageNumber
+     * @param numberOfTweets
      * @return a list of all all the tweets posted on the timeline
      */
     @GetMapping(path = "/getTweetsAfterPagination")
-    public List<String> getTweetsAfterPaging()
-    {
-        List<String> statuses = userTimelineFetcherInterfaceImp.getUserTimelineAfterPaging();
-        logger.info("Got all the statuses");
-        return statuses;
+    public List<String> getTweetsAfterPaging(@RequestParam  Integer pageNumber, @RequestParam  Integer numberOfTweets) {
+        return userTimelineFetcherInterfaceImp.getUserTimelineAfterPaging(pageNumber, numberOfTweets);
     }
 
     /**
@@ -103,9 +98,7 @@ public class UserTimelineFetcher {
      */
     @GetMapping(path = "/getAllTrendyLocations")
     public List<String> getAllLatestTrendyLocations() {
-        List<String> locationList = userTimelineFetcherInterfaceImp.getAllTrendingLocations();
-        logger.info("Gained all the location details");
-        return  locationList;
+         return userTimelineFetcherInterfaceImp.getAllTrendingLocations();
     }
 }
 

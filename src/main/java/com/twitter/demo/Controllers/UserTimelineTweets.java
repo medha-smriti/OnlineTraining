@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 @RestController
 public class UserTimelineTweets {
 
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
     UserTimelineTweetsInterfaceImpl userTimelineTweetsInterfaceImpl = new UserTimelineTweetsInterfaceImpl();
 
     /**
@@ -36,9 +35,6 @@ public class UserTimelineTweets {
      */
     @RequestMapping(path = "/tweet", method = RequestMethod.POST)
     public String addTweet(@RequestBody  String tweet) {
-        String addedTweet = userTimelineTweetsInterfaceImpl.addTweets(tweet);
-        logger.debug("the tweet message", addedTweet);
-        logger.info("Tweet Done");
-        return addedTweet;
+        return userTimelineTweetsInterfaceImpl.addTweets(tweet);
     }
 }
